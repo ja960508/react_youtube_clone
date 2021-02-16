@@ -1,0 +1,29 @@
+.header {
+  width: 100%;
+  height: 4rem;
+  margin: 0 0.3rem;
+  background-color: black;
+  display: flex;
+  padding: 0.8rem 1rem;
+}
+
+.logo {
+  color: white;
+  display: flex;
+  align-items: center;
+  font-size: 0.9rem;
+  margin-right: 2rem;
+}
+
+.search {
+  flex-basis: 100%;
+  outline: 0;
+}
+
+.searchBtn {
+  cursor: pointer;
+}
+
+.searchImg {
+  height: 100%;
+}
