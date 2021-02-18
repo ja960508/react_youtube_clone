@@ -1,7 +1,7 @@
-import React, { useRef } from "react";
+import React, { memo, useRef } from "react";
 import styles from "./header.module.css";
 
-const Header = ({ handleSearchSubmit }) => {
+const Header = memo(({ handleSearchSubmit }) => {
   const inputRef = useRef();
   const handleOnClick = () => {
     handleSearchSubmit(inputRef.current.value);
@@ -39,6 +39,6 @@ const Header = ({ handleSearchSubmit }) => {
       </button>
     </header>
   );
-};
+});
 
 export default Header;

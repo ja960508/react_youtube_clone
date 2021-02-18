@@ -1,50 +1,47 @@
-import { useEffect, useState } from "react";
-import "./app.css";
+import { useCallback, useEffect, useState } from "react";
+import styles from "./app.module.css";
 import Header from "./components/header/header";
+import VideoDetail from "./components/video_detail/video_detail";
 import VideoList from "./components/video_list/video_list";
 
-function App() {
+function App({ youtube }) {
   const [videos, setVideos] = useState([]);
+  const [selectedVideo, setSelectedVideo] = useState(null);
 
   useEffect(() => {
-    const requestOptions = {
-      method: "GET",
-      redirect: "follow",
-    };
+    youtube.mostPopular().then((videos) => setVideos(videos));
+  }, [youtube]); // youtube client가 바뀐다면 업데이트
 
-    fetch(
-      "https://youtube.googleapis.com/youtube/v3/search?part=snippet&chart=mostPopular&maxResults=25&key=AIzaSyAeJ4Ia_LbfYZfFUDBYmLtjH_bht4dYB7w",
-      requestOptions
-    )
-      .then((response) => response.json())
-      .then((result) =>
-        result.items.map((data) => ({ ...data, id: data.id.videoId }))
-      )
-      .then((result) => setVideos(result))
-      .catch((error) => console.log("error", error));
-  }, []);
+  const handleSearchSubmit = useCallback(
+    (keyword) => {
+      youtube.search(keyword).then((videos) => {
+        setVideos(videos);
+        setSelectedVideo(null);
+      });
+    },
+    [youtube]
+  );
 
-  const handleSearchSubmit = (keyword) => {
-    const requestOptions = {
-      method: "GET",
-      redirect: "follow",
-    };
-
-    fetch(
-      `https://youtube.googleapis.com/youtube/v3/search?part=snippet&maxResults=25&q=${keyword}&type=video&key=AIzaSyAeJ4Ia_LbfYZfFUDBYmLtjH_bht4dYB7w`,
-      requestOptions
-    )
-      .then((response) => response.json())
-      .then((result) =>
-        result.items.map((data) => ({ ...data, id: data.id.videoId }))
-      )
-      .then((result) => setVideos(result))
-      .catch((error) => console.log("error", error));
+  const selectVideo = (video) => {
+    setSelectedVideo(video);
   };
   return (
     <>
       <Header handleSearchSubmit={handleSearchSubmit} />
-      <VideoList videos={videos} />;
+      <section className={styles.content}>
+        {selectedVideo && (
+          <div className={styles.detail}>
+            <VideoDetail video={selectedVideo} />
+          </div>
+        )}
+        <div className={styles.list}>
+          <VideoList
+            videos={videos}
+            onVideoClick={selectVideo}
+            display={selectedVideo ? "list" : "grid"}
+          />
+        </div>
+      </section>
     </>
   );
 }
